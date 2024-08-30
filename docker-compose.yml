@@ -1,0 +1,31 @@
+version: '3.8' 
+ 
+services: 
+  postgres: 
+    image: postgres:latest 
+    container_name: postgres 
+    environment: 
+      POSTGRES_USER: postgres 
+      POSTGRES_PASSWORD: password 
+      POSTGRES_DB: skrypnikovaM 
+    volumes: 
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql 
+    ports: 
+      - "5432:5432" 
+    
+      
+  python: 
+    build: ./python
+    image: python:latest
+    restart: on-failure
+    container_name: my_python 
+    depends_on: 
+      - postgres 
+    environment: 
+      - POSTGRES_DB=skrypnikovaM
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password 
+      - POSTGRES_HOST=postgres 
+    volumes: 
+      - ./python:/app 
+    command: ["python", "/app/app.py"]
